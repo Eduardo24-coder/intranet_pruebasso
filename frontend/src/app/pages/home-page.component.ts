@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import type { DownloadItem } from '../core/models';
 import { AnalyticsService } from '../core/services/analytics.service';
@@ -31,6 +31,37 @@ interface PublicLinkResponse {
   description: string | null;
   url: string;
 }
+
+interface BulletinItem {
+  title: string;
+  description: string;
+  imagePath: string;
+  imageAlt: string;
+  publishedAt: string;
+  publishedLabel: string;
+  isNew: boolean;
+}
+
+const bulletins: BulletinItem[] = [
+  {
+    title: 'Radar cibernético',
+    description: 'Protege tu información confidencial en Internet.',
+    imagePath: 'branding/radar-cibernetico-boletin-19.png',
+    imageAlt: 'Radar cibernético, boletín número 19 sobre protección de información confidencial',
+    publishedAt: '2026-11-17',
+    publishedLabel: 'Publicado el 17 de noviembre de 2026',
+    isNew: true
+  },
+  {
+    title: '¿Cómo presentar una denuncia en el CIV?',
+    description: 'Conoce los canales de atención de la Unidad de Asuntos de Probidad.',
+    imagePath: 'branding/civ-denuncias.png',
+    imageAlt: 'Afiche informativo sobre cómo presentar una denuncia en el CIV',
+    publishedAt: '2026-11-11',
+    publishedLabel: 'Publicado el 11 de noviembre de 2026',
+    isNew: false
+  }
+];
 
 const staticDownloads: DownloadItem[] = [
   {
@@ -195,7 +226,7 @@ const linkPresentationMap: Record<string, Pick<FeaturedLink, 'previewLabel' | 'p
         </div>
       </header>
 
-      <section class="cyber-notice" aria-labelledby="cyber-notice-title">
+      <section *ngIf="showCyberAwareness" class="cyber-notice" aria-labelledby="cyber-notice-title">
         <div class="cyber-notice-copy">
           <p class="cyber-notice-label">
             <span class="cyber-notice-label-icon" aria-hidden="true">
@@ -235,24 +266,84 @@ const linkPresentationMap: Record<string, Pick<FeaturedLink, 'previewLabel' | 'p
       </section>
 
       <section class="civ-notice" aria-labelledby="civ-notice-title">
-        <div class="civ-notice-copy">
+        <header class="bulletin-meta">
           <p class="civ-notice-label">
             <span class="civ-notice-label-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M4 13v-2l11-4v10L4 13Zm11-3 4-2v8l-4-2M6 14l1 5h3l-1-5" /></svg>
             </span>
-            Aviso prioritario
+            Boletines informativos
           </p>
-          <h1 id="civ-notice-title">¿C&oacute;mo presentar una denuncia en el CIV?</h1>
-          <p>Conoce los canales de atenci&oacute;n de la Unidad de Asuntos de Probidad.</p>
-          <a class="civ-notice-action" href="/afiche-civ" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8M19 14v5H5V5h5" /></svg>
-            Ver afiche completo
-          </a>
+          <div class="bulletin-meta-right">
+            <time [attr.datetime]="activeBulletin().publishedAt">{{ activeBulletin().publishedLabel }}</time>
+            <span class="bulletin-counter">{{ activeBulletinIndex() + 1 }} / {{ bulletins.length }}</span>
+          </div>
+        </header>
+
+        <div class="bulletin-stage">
+          <div class="civ-notice-copy">
+          <div class="bulletin-watermark" aria-hidden="true">
+            <img src="branding/emblema-aeronautico.png" alt="" />
+          </div>
+          <span *ngIf="activeBulletin().isNew" class="bulletin-new"><span aria-hidden="true"></span>Nuevo</span>
+          <h1 id="civ-notice-title">{{ activeBulletin().title }}</h1>
+          <p>{{ activeBulletin().description }}</p>
+          <button type="button" class="civ-notice-action" (click)="openBulletin()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.75 12s3.25-5 9.25-5 9.25 5 9.25 5-3.25 5-9.25 5-9.25-5-9.25-5Zm9.25-2.25A2.25 2.25 0 1 0 12 14.25a2.25 2.25 0 0 0 0-4.5Z" /></svg>
+            Leer boletín
+          </button>
+          </div>
+
+          <div class="bulletin-visual">
+            <button type="button" class="civ-poster" (click)="openBulletin()" [attr.aria-label]="'Leer ' + activeBulletin().title">
+              <img [src]="activeBulletin().imagePath" [alt]="activeBulletin().imageAlt" />
+              <span>Vista previa</span>
+            </button>
+
+            <nav class="bulletin-slider-nav" aria-label="Cambiar boletín">
+              <button type="button" class="bulletin-arrow" (click)="previousBulletin()" aria-label="Boletín anterior">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" /></svg>
+              </button>
+              <div class="bulletin-pagination">
+                <button
+                  *ngFor="let bulletin of bulletins; let index = index"
+                  type="button"
+                  [class.active]="index === activeBulletinIndex()"
+                  (click)="selectBulletin(index)"
+                  [attr.aria-label]="'Mostrar boletín ' + (index + 1)"
+                  [attr.aria-current]="index === activeBulletinIndex() ? 'true' : null"
+                ></button>
+              </div>
+              <button type="button" class="bulletin-arrow" (click)="nextBulletin()" aria-label="Boletín siguiente">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+              </button>
+            </nav>
+          </div>
         </div>
-        <a class="civ-poster" href="/afiche-civ" target="_blank" rel="noopener noreferrer" aria-label="Abrir afiche completo sobre cómo presentar una denuncia en el CIV">
-          <img src="branding/civ-denuncias.png" alt="Afiche informativo: cómo presentar una denuncia en el CIV" />
-        </a>
       </section>
+
+      <div *ngIf="bulletinOpen()" class="bulletin-modal-backdrop">
+        <section
+          class="bulletin-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="bulletin-modal-title"
+        >
+          <header class="bulletin-modal-header">
+            <div>
+              <span>Boletín informativo</span>
+              <h2 id="bulletin-modal-title">{{ activeBulletin().title }}</h2>
+              <time [attr.datetime]="activeBulletin().publishedAt">{{ activeBulletin().publishedLabel }}</time>
+            </div>
+            <button type="button" class="bulletin-close" (click)="closeBulletin()" autofocus>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+              Cerrar
+            </button>
+          </header>
+          <div class="bulletin-modal-body">
+            <img [src]="activeBulletin().imagePath" [alt]="activeBulletin().imageAlt" />
+          </div>
+        </section>
+      </div>
 
       <section class="hero">
         <div class="hero-copy">
@@ -590,10 +681,35 @@ export class HomePageComponent {
   protected readonly pendingPdfItems = signal<PendingPdfItem[]>(staticSpecs);
   protected readonly showDownloadHistory = signal(false);
   protected readonly downloadHistory = signal<Array<DownloadItem & { downloadedAt: string }>>(this.readDownloadedDocs());
+  protected readonly showCyberAwareness = false;
+  protected readonly bulletinOpen = signal(true);
+  protected readonly bulletins = bulletins;
+  protected readonly activeBulletinIndex = signal(0);
+  protected readonly activeBulletin = computed(() => this.bulletins[this.activeBulletinIndex()]);
 
   constructor() {
     this.analytics.trackVisit(window.location.pathname);
     void this.loadPortalData();
+  }
+
+  protected openBulletin() {
+    this.bulletinOpen.set(true);
+  }
+
+  protected closeBulletin() {
+    this.bulletinOpen.set(false);
+  }
+
+  protected nextBulletin() {
+    this.activeBulletinIndex.update((index) => (index + 1) % this.bulletins.length);
+  }
+
+  protected previousBulletin() {
+    this.activeBulletinIndex.update((index) => (index - 1 + this.bulletins.length) % this.bulletins.length);
+  }
+
+  protected selectBulletin(index: number) {
+    this.activeBulletinIndex.set(index);
   }
 
   protected async loadPortalData() {
