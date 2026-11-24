@@ -2,7 +2,7 @@
 INSERT INTO document_categories (name, description, active)
 VALUES
     ('Formularios', 'Documentos institucionales descargables', TRUE),
-    ('Especificaciones', 'Documentos tecnicos en PDF', TRUE)
+    ('Especificaciones', 'Documentos técnicos en PDF', TRUE)
 ON CONFLICT (name) DO NOTHING;
 
 -- Documentos
@@ -35,7 +35,7 @@ FROM (
             'Formularios',
             'solicitud-usuario',
             'Solicitud de usuario',
-            'Formulario de alta o habilitacion de usuario institucional.',
+            'Formulario de alta o habilitación de usuario institucional.',
             'docx',
             'solicitud-usuario.docx',
             'forms/solicitud-usuario.docx',
@@ -46,7 +46,7 @@ FROM (
             'Formularios',
             'correo-institucional',
             'Solicitud de correo institucional',
-            'Formulario para la asignacion de cuenta de correo institucional.',
+            'Formulario para la asignación de cuenta de correo institucional.',
             'docx',
             'correo-institucional.docx',
             'forms/correo-institucional.docx',
@@ -57,7 +57,7 @@ FROM (
             'Formularios',
             'acceso-internet',
             'Solicitud de acceso a internet',
-            'Formulario para la gestion de accesos a internet.',
+            'Formulario para la gestión de accesos a internet.',
             'docx',
             'acceso-internet.docx',
             'forms/acceso-internet.docx',
@@ -79,7 +79,7 @@ FROM (
             'Formularios',
             'usuario-sistema-dgac',
             'Solicitud de base de datos',
-            'Formulario para la creacion o acceso a bases de datos.',
+            'Formulario para la creación o acceso a bases de datos.',
             'docx',
             'usuario-sistema-dgac.docx',
             'forms/usuario-sistema-dgac.docx',
@@ -90,7 +90,7 @@ FROM (
             'Formularios',
             'solicitud-carpeta-compartida',
             'Solicitud de carpeta compartida',
-            'Solicitud para la habilitacion de acceso a carpeta compartida institucional.',
+            'Solicitud para la habilitación de acceso a carpeta compartida institucional.',
             'docx',
             'solicitud-carpeta-compartida.docx',
             'forms/solicitud-carpeta-compartida.docx',
@@ -101,7 +101,7 @@ FROM (
             'Especificaciones',
             'computadora-escritorio',
             'Computadora de escritorio',
-            'Especificaciones tecnicas para equipo de computo de escritorio institucional.',
+            'Especificaciones técnicas para equipo de cómputo de escritorio institucional.',
             'pdf',
             'computadora-escritorio.pdf',
             'specs/computadora-escritorio.pdf',
@@ -111,8 +111,8 @@ FROM (
         (
             'Especificaciones',
             'computadora-portatil',
-            'Computadora portatil',
-            'Documento con requerimientos y caracteristicas para computadora portatil.',
+            'Computadora portátil',
+            'Documento con requerimientos y características para computadora portátil.',
             'pdf',
             'computadora-portatil.pdf',
             'specs/computadora-portatil.pdf',
@@ -122,8 +122,8 @@ FROM (
         (
             'Especificaciones',
             'escaner',
-            'Escaner',
-            'Ficha de especificaciones para equipo de digitalizacion y escaneo institucional.',
+            'Escáner',
+            'Ficha de especificaciones para equipo de digitalización y escaneo institucional.',
             'pdf',
             'escaner.pdf',
             'specs/escaner.pdf',
@@ -134,7 +134,7 @@ FROM (
             'Especificaciones',
             'ups',
             'UPS',
-            'Especificaciones tecnicas para sistema de respaldo y proteccion electrica.',
+            'Especificaciones técnicas para sistema de respaldo y protección eléctrica.',
             'pdf',
             'ups.pdf',
             'specs/ups.pdf',
@@ -164,32 +164,32 @@ WHERE NOT EXISTS (
 INSERT INTO links (title, description, url, active)
 VALUES
     (
-        'Direccion General de Aeronautica Civil',
+        'Dirección General de Aeronáutica Civil',
         'Portal institucional oficial de la DGAC.',
         'https://dgac.gob.gt/',
         TRUE
     ),
     (
-        'Portal de tramites DGAC',
-        'Acceso para gestionar y autenticar tramites institucionales.',
+        'Portal de trámites DGAC',
+        'Acceso para gestionar y autenticar trámites institucionales.',
         'http://prueba_tramites.dgacgt.local/auth',
         TRUE
     ),
     (
         'Ministerio de Comunicaciones, Infraestructura y Vivienda',
-        'Sitio oficial del ministerio para consultas, informacion y publicaciones.',
+        'Sitio oficial del ministerio para consultas, información y publicaciones.',
         'https://www.civ.gob.gt/web/guest/inicio',
         TRUE
     ),
     (
-        'Direccion General de Aeronautica Civil',
-        'Portal interno institucional oficial de la Direccion General de Aeronautica Civil.',
+        'Dirección General de Aeronáutica Civil',
+        'Portal interno institucional oficial de la Dirección General de Aeronáutica Civil.',
         'http://172.16.0.126/',
         TRUE
     ),
     (
-        'Radio TGW en linea',
-        'Acceso directo a la senal en linea de Radio TGW.',
+        'Radio TGW en línea',
+        'Acceso directo a la señal en línea de Radio TGW.',
         'https://radiotgw.gob.gt/radio-tgw-en-linea/',
         TRUE
     )

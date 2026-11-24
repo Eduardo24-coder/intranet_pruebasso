@@ -7,3 +7,5 @@ backend/data/
 backend/*.log
 backend/*.out.log
 backend/*.err.log
+artifacts/
+bd_intranet.sql

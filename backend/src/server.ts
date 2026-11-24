@@ -51,7 +51,7 @@ app.post("/api/auth/login", async (req, res) => {
   const { username, password } = req.body as { username?: string; password?: string };
 
   if (!username || !password) {
-    return res.status(400).json({ message: "Usuario y contrasena son requeridos." });
+    return res.status(400).json({ message: "Usuario y contraseña son requeridos." });
   }
 
   const normalizedUsername = username.trim().toLowerCase();
@@ -62,7 +62,7 @@ app.post("/api/auth/login", async (req, res) => {
     : await portalRepository.validateAdminCredentials(normalizedUsername, password);
 
   if (!admin) {
-    return res.status(401).json({ message: "Credenciales invalidas." });
+    return res.status(401).json({ message: "Credenciales inválidas." });
   }
 
   res.json({
@@ -85,18 +85,18 @@ app.get("/api/auth/me", requireAdminAuth, (req: AuthenticatedRequest, res) => {
 app.post("/api/auth/change-password", requireAdminAuth, async (req: AuthenticatedRequest, res) => {
   if (isLdapEnabled()) {
     return res.status(400).json({
-      message: "La contrasena de este usuario se administra desde el directorio institucional.",
+      message: "La contraseña de este usuario se administra desde el directorio institucional.",
     });
   }
 
   const { newPassword } = req.body as { newPassword?: string };
 
   if (!req.adminUser?.id) {
-    return res.status(401).json({ message: "Autenticacion requerida." });
+    return res.status(401).json({ message: "Autenticación requerida." });
   }
 
   if (!newPassword) {
-    return res.status(400).json({ message: "La nueva contrasena es requerida." });
+    return res.status(400).json({ message: "La nueva contraseña es requerida." });
   }
 
   try {
@@ -108,7 +108,7 @@ app.post("/api/auth/change-password", requireAdminAuth, async (req: Authenticate
 
     res.json({ user });
   } catch (error) {
-    if (error instanceof Error && error.message.includes("La nueva contrasena")) {
+    if (error instanceof Error && error.message.includes("La nueva contraseña")) {
       return res.status(400).json({ message: error.message });
     }
 
@@ -189,7 +189,7 @@ app.post(
     const file = req.file;
 
     if (!title?.trim() || !file || !["form", "spec"].includes(kind ?? "")) {
-      return res.status(400).json({ message: "Titulo, tipo de contenido y archivo son requeridos." });
+      return res.status(400).json({ message: "Título, tipo de contenido y archivo son requeridos." });
     }
 
     const contentKind = kind as "form" | "spec";
@@ -207,7 +207,7 @@ app.post(
     }
 
     if (contentKind === "spec" && file.mimetype !== "application/pdf") {
-      return res.status(400).json({ message: "El archivo seleccionado no es un PDF valido." });
+      return res.status(400).json({ message: "El archivo seleccionado no es un PDF válido." });
     }
 
     const folder = contentKind === "spec" ? "specs" : "forms";
@@ -249,7 +249,7 @@ app.post("/api/admin/links", requireAdminAuth, requireRoles("admin", "super_admi
   };
 
   if (!title?.trim() || !url?.trim()) {
-    return res.status(400).json({ message: "Titulo y URL son requeridos." });
+    return res.status(400).json({ message: "Título y URL son requeridos." });
   }
 
   try {
@@ -291,7 +291,7 @@ app.delete("/api/admin/documents/:id", requireAdminAuth, requireRoles("admin", "
 app.delete("/api/admin/links/:id", requireAdminAuth, requireRoles("admin", "super_admin"), async (req: AuthenticatedRequest, res) => {
   const linkId = Number(req.params.id);
   if (!Number.isInteger(linkId)) {
-    return res.status(400).json({ message: "Identificador de enlace invalido." });
+    return res.status(400).json({ message: "Identificador de enlace inválido." });
   }
 
   const deleted = await portalRepository.deleteManagedLink(linkId);
@@ -341,7 +341,7 @@ app.post(
       res.status(201).json(created);
     } catch (error) {
       if (isUniqueViolation(error)) {
-        return res.status(409).json({ message: "Ya existe un admin autorizado con ese login." });
+        return res.status(409).json({ message: "Ya existe un administrador autorizado con ese usuario." });
       }
 
       throw error;
@@ -365,11 +365,11 @@ app.put(
     };
 
     if (!Number.isInteger(adminId) || !loginName || !role || !isAdminRole(role) || typeof active !== "boolean") {
-      return res.status(400).json({ message: "Datos incompletos para actualizar el admin." });
+      return res.status(400).json({ message: "Datos incompletos para actualizar el administrador." });
     }
 
     if (req.adminUser?.id === adminId && role !== "super_admin") {
-      return res.status(400).json({ message: "No puede retirarse su propio rol de super admin." });
+      return res.status(400).json({ message: "No puede retirarse su propio rol de superadministrador." });
     }
 
     try {
@@ -390,7 +390,7 @@ app.put(
       res.json(updated);
     } catch (error) {
       if (isUniqueViolation(error)) {
-        return res.status(409).json({ message: "Ya existe un admin autorizado con ese login." });
+        return res.status(409).json({ message: "Ya existe un administrador autorizado con ese usuario." });
       }
 
       throw error;
@@ -426,7 +426,7 @@ app.delete(
 app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (error instanceof multer.MulterError) {
     if (error.code === "LIMIT_FILE_SIZE") {
-      return res.status(413).json({ message: "El archivo supera el limite de 25 MB." });
+      return res.status(413).json({ message: "El archivo supera el límite de 25 MB." });
     }
 
     return res.status(400).json({ message: "No fue posible procesar el archivo enviado." });
@@ -518,7 +518,7 @@ async function removeManagedUpload(filePath: string) {
   const uploadRoot = `${uploadDirectory}${path.sep}`;
 
   if (!absolutePath.startsWith(uploadRoot)) {
-    throw new Error("Ruta de archivo administrado invalida.");
+    throw new Error("Ruta de archivo administrado inválida.");
   }
 
   await unlink(absolutePath).catch((error: NodeJS.ErrnoException) => {

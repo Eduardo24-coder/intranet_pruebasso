@@ -179,7 +179,7 @@ export class PortalRepository {
     await db.query(
       `
         INSERT INTO admin_activity (admin_user_id, action, description)
-        VALUES ($1, 'login', 'Inicio de sesion administrativo')
+        VALUES ($1, 'login', 'Inicio de sesión administrativa')
       `,
       [admin.id]
     );
@@ -375,7 +375,7 @@ export class PortalRepository {
     await this.recordAdminActivity(
       input.updatedBy,
       "update_admin",
-      `Actualizacion de acceso administrativo para ${normalizedLoginName}`
+      `Actualización de acceso administrativo para ${normalizedLoginName}`
     );
 
     return this.mapManagedAdmin(admin);
@@ -501,7 +501,7 @@ export class PortalRepository {
       [adminId]
     );
 
-    await this.recordAdminActivity(adminId, "login", "Inicio de sesion administrativo");
+    await this.recordAdminActivity(adminId, "login", "Inicio de sesión administrativa");
   }
 
   async changeAdminPassword(adminId: number, newPassword: string) {
@@ -538,7 +538,7 @@ export class PortalRepository {
     await this.recordAdminActivity(
       adminId,
       "change_password",
-      "Cambio obligatorio de contrasena en primer acceso"
+      "Cambio obligatorio de contraseña en primer acceso"
     );
 
     return {
@@ -649,7 +649,7 @@ export class PortalRepository {
       `,
       [
         categoryName,
-        input.kind === "spec" ? "Documentos tecnicos en PDF" : "Documentos institucionales descargables",
+        input.kind === "spec" ? "Documentos técnicos en PDF" : "Documentos institucionales descargables",
         input.code,
         input.title,
         input.description,
@@ -1071,7 +1071,7 @@ export class PortalRepository {
     }
 
     throw new Error(
-      "La nueva contrasena debe tener al menos 10 caracteres, una mayuscula, una minuscula y un caracter especial."
+      "La nueva contraseña debe tener al menos 10 caracteres, una mayúscula, una minúscula y un carácter especial."
     );
   }
 }

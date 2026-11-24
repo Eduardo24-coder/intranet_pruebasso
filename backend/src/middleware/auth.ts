@@ -18,20 +18,20 @@ export async function requireAdminAuth(req: AuthenticatedRequest, res: Response,
   const authorization = req.header("authorization");
 
   if (!authorization?.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Autenticacion requerida." });
+    return res.status(401).json({ message: "Autenticación requerida." });
   }
 
   const token = authorization.slice("Bearer ".length);
   const payload = verifyAdminToken(token);
 
   if (!payload) {
-    return res.status(401).json({ message: "Sesion invalida o expirada." });
+    return res.status(401).json({ message: "Sesión inválida o expirada." });
   }
 
   const admin = await portalRepository.getAdminUserByLoginName(payload.sub);
 
   if (!admin?.active || admin.id !== payload.uid) {
-    return res.status(401).json({ message: "Sesion invalida o expirada." });
+    return res.status(401).json({ message: "Sesión inválida o expirada." });
   }
 
   req.adminUser = {
@@ -55,7 +55,7 @@ export function requireSuperAdmin(req: AuthenticatedRequest, res: Response, next
 export function requireRoles(...roles: AdminRole[]) {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (!req.adminUser || !roles.includes(req.adminUser.role)) {
-      return res.status(403).json({ message: "No tiene permisos para realizar esta accion." });
+      return res.status(403).json({ message: "No tiene permisos para realizar esta acción." });
     }
 
     next();
